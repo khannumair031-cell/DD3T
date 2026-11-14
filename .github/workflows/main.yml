@@ -1,3 +1,4 @@
+
 name: Build DD3T Android APK
 
 on:
@@ -5,7 +6,7 @@ on:
   push:
     paths:
       - '**.zip'
-      - '.github/workflows/build-apk.yml'
+      - '.github/workflows/main.yml'
 
 jobs:
   build:
@@ -23,12 +24,17 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: |
+            platform-tools
+            platforms;android-35
+            build-tools;35.0.0
 
       - name: Extract Android project ZIP
         run: |
           ZIP_FILE=$(find . -maxdepth 1 -iname '*.zip' -type f | head -n 1)
           if [ -z "$ZIP_FILE" ]; then
-            echo "Android project ZIP not found in repository root"
+            echo "Android project ZIP not found"
             exit 1
           fi
           mkdir android-project
@@ -52,5 +58,4 @@ jobs:
           name: DD3T-Android-APK
           path: android-project/**/build/outputs/apk/debug/*.apk
           if-no-files-found: error
-
-       
+          
